@@ -1,6 +1,8 @@
 # code-metrics
 
-Python scripts for scraping code projects and generating reports.
+Python scripts for scraping code projects and gathering statistics. The goal is to create helpful reports on which files in a project are good candidates for code auditing and clean-up.
+
+For example, code files with lots of dependencies are likely important and should be well maintained. Large code files may benefit from being decomposed into smaller units. Code files with minor typographical errors such as trailing whitespace may have been hastily authored and not carefully checked.
 
 # Features Wishlist
 
@@ -16,3 +18,7 @@ Python scripts for scraping code projects and generating reports.
 * Include depth stats (tree of includes), largest total compilation units
 * Most frequently touched files (git, svn)
 * Most number of users touched files (git, svn)
+
+# Helpful Links
+
+* [Style Guide for Python Code](https://www.python.org/dev/peps/pep-0008/)

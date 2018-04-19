@@ -1,2 +1,6 @@
 __pycache__
 *.pyc
+
+# for Sublime Test users
+*.sublime-project
+*.sublime-workspace
