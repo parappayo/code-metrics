@@ -21,7 +21,10 @@ def line_length_histogram(code):
 	return result
 
 def report(code):
-	print("work in progress")
+	return {
+		'line_count': line_count(code),
+		'line_length': line_length_histogram(code)
+	}
 
 if __name__ == "__main__":
 	if len(sys.argv) < 2:

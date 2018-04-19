@@ -1,5 +1,11 @@
+"""
+Generates metrics for an given project.
+
+TODO: project config should be supplied as input, not imported
+"""
 
 import os, config
+import code_metrics
 
 _all_file_paths = False
 
@@ -16,12 +22,21 @@ def find_files(root_path, file_test):
 			result.append(path)
 	return result
 
-def get_all_file_paths():
+def get_all_file_paths(project_root):
 	global _all_file_paths
 	if not _all_file_paths:
-		_all_file_paths = find_files(config.project_root, is_source_file)
+		_all_file_paths = find_files(project_root, is_source_file)
 	return _all_file_paths
 
+def report(project_root):
+	result = {}
+	for path in get_all_file_paths(project_root):
+		with open(path, "r") as input_file:
+			try:
+				result[path] = code_metrics.report(input_file.read())
+			except IOError:
+				continue
+	return result
+
 if __name__ == "__main__":
-	for path in get_all_file_paths():
-		print(path)
+	print(report(config.project_root))
