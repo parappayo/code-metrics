@@ -23,7 +23,7 @@ def lines_ending_in_whitespace_count(lines):
 def line_length_distribution(lines):
 	return distribution(map(len, lines))
 
-def line_indent_charlen(line):
+def line_indent_len(line):
 	result = 0
 	for c in line:
 		if c.isspace():
@@ -33,7 +33,7 @@ def line_indent_charlen(line):
 	return result
 
 def line_indent_distribution(lines):
-	return distribution(map(line_indent_charlen, lines))
+	return distribution(map(line_indent_len, lines))
 
 def report(code):
 	lines = code.splitlines()
