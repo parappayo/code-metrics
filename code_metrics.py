@@ -7,12 +7,19 @@ Command Line:
 
 import sys
 
+def ends_with_whitespace(line):
+	if len(line) < 1: return False
+	return line[len(line)-1].isspace()
+
 def line_count(code):
 	return code.count('\n')
 
-def line_length_histogram(code):
+def lines_ending_in_whitespace_count(lines):
+	return sum(map(ends_with_whitespace, lines))
+
+def length_per_line(lines):
 	result = {}
-	for line in code.splitlines():
+	for line in lines:
 		line_len = len(line)
 		if line_len in result:
 			result[line_len] += 1
@@ -21,9 +28,11 @@ def line_length_histogram(code):
 	return result
 
 def report(code):
+	lines = code.splitlines()
 	return {
 		'line_count': line_count(code),
-		'line_length': line_length_histogram(code)
+		'lines_ending_in_whitespace_count': lines_ending_in_whitespace_count(lines),
+		'length_per_line': length_per_line(lines)
 	}
 
 if __name__ == "__main__":
