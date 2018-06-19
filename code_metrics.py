@@ -14,11 +14,71 @@ lang_file_ext = {
 	'.cpp': 'cplusplus',
 }
 
+html_report_format = """
+<!doctype html>
+<html>
+
+<head>
+<title>Metrics: {report[source_path]}</title>
+<script src="Chart.min.js"></script>
+</head>
+
+<body>
+
+<h1>Metrics: {report[source_path]}</h1>
+
+<h3>Line Count</h3>
+<p>{report[line_count]}</p>
+
+<h3>Number of Lines Ending in Whitespace</h3>
+<p>{report[lines_ending_in_whitespace_count]}</p>
+
+{charts}
+
+</body>
+</html>
+"""
+
+html_chart_format = """
+<h3>{title}</h3>
+<canvas id="{id}" width="200" height="100"></canvas>
+
+<script>
+var ctx = document.getElementById("{id}").getContext('2d');
+var {id} = new Chart(ctx, {{
+	type: 'bar',
+	data: {{
+		labels: {keys},
+		datasets: [{{
+			label: '{label}',
+			data: {values}
+		}}]
+	}},
+	options: {{
+		scales: {{
+			yAxes: [{{
+				ticks: {{
+					beginAtZero:true
+				}}
+			}}]
+		}}
+	}}
+}});
+</script>
+"""
+
 def distribution(values):
 	result = {}
 	for value in values:
 		result[value] = result.get(value, 0) + 1
 	return result
+
+def sort_distribution(distr_dict):
+	keys, values = [], []
+	for key in sorted(distr_dict):
+		keys.append(key)
+		values.append(distr_dict[key])
+	return keys, values
 
 def file_ext_lang(path):
 	filename, file_ext = os.path.splitext(path)
@@ -78,12 +138,13 @@ def report_functions(lines):
 		result[name] = report_function(lines)
 	return result
 
-def report(code, target_lang):
+def report(path, code, target_lang):
 	if target_lang != 'python':
 		print('input lang not supported yet:', target_lang)
 		exit()
 	lines = code.splitlines()
 	return {
+		'source_path': path,
 		'line_count': len(lines),
 		'lines_ending_in_whitespace_count': lines_ending_in_whitespace_count(lines),
 		'line_length_distribution': line_length_distribution(lines),
@@ -91,11 +152,20 @@ def report(code, target_lang):
 		'functions': report_functions(lines)
 	}
 
+def charts_html(report):
+	keys, values = sort_distribution(report['line_length_distribution'])
+	return html_chart_format.format(
+		title='Line Length Distribution',
+		label='line count',
+		id='line_length_distribution',
+		keys=keys,
+		values=values)
+
 def print_report(report, format):
 	if format == 'pydict':
 		print(report)
 	else:
-		print('html output not supported yet')
+		print(html_report_format.format(report=report, charts=charts_html(report)))
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser(description=__doc__)
@@ -124,4 +194,4 @@ if __name__ == "__main__":
 
 	with open(path, "r") as input_file:
 		code = input_file.read()
-		print_report(report(code, target_lang), args.format)
+		print_report(report(path, code, target_lang), args.format)
