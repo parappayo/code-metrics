@@ -5,7 +5,9 @@ Command Line:
 > python code_metrics.py [file path]
 """
 
-import sys
+import sys, re
+
+python_func_regex = re.compile('def\s+(.*)\(.*:')
 
 def distribution(values):
 	result = {}
@@ -35,13 +37,46 @@ def line_indent_len(line):
 def line_indent_distribution(lines):
 	return distribution(map(line_indent_len, lines))
 
+def split_functions_python(lines):
+	result = {}
+	function_name = False
+	function_body = False
+	for line in lines:
+		if function_name:
+			if len(line.strip()) == 0:
+				result[function_name] = function_body
+				function_name = False
+			else:
+				function_body.append(line)
+		else:
+			match = re.match(python_func_regex, line)
+			if match:
+				function_name = match[1]
+				function_body = []
+	return result
+
+def report_function(lines):
+	return {
+		'line_count': len(lines),
+		'line_length_distribution': line_length_distribution(lines),
+		'line_indent_distribution': line_indent_distribution(lines)
+	}
+
+def report_functions(lines):
+	result = {}
+	functions = split_functions_python(lines) #TODO: if lang == Python
+	for name, lines in functions.items():
+		result[name] = report_function(lines)
+	return result
+
 def report(code):
 	lines = code.splitlines()
 	return {
 		'line_count': len(lines),
 		'lines_ending_in_whitespace_count': lines_ending_in_whitespace_count(lines),
 		'line_length_distribution': line_length_distribution(lines),
-		'line_indent_distribution': line_indent_distribution(lines)
+		'line_indent_distribution': line_indent_distribution(lines),
+		'functions': report_functions(lines)
 	}
 
 if __name__ == "__main__":
