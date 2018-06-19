@@ -17,24 +17,37 @@ def line_count(code):
 def lines_ending_in_whitespace_count(lines):
 	return sum(map(ends_with_whitespace, lines))
 
-def line_lengths(lines):
-	return map(len, lines)
+def distribution(values):
+	result = {}
+	for value in values:
+		if value in result:
+			result[value] += 1
+		else:
+			result[value] = 1
+	return result
 
 def line_length_distribution(lines):
-	result = {}
-	for line_len in line_lengths(lines):
-		if line_len in result:
-			result[line_len] += 1
+	return distribution(map(len, lines))
+
+def line_indent_charlen(line):
+	result = 0
+	for c in line:
+		if c.isspace():
+			result += 1
 		else:
-			result[line_len] = 1
+			break
 	return result
+
+def line_indent_distribution(lines):
+	return distribution(map(line_indent_charlen, lines))
 
 def report(code):
 	lines = code.splitlines()
 	return {
 		'line_count': line_count(code),
 		'lines_ending_in_whitespace_count': lines_ending_in_whitespace_count(lines),
-		'line_length_distribution': line_length_distribution(lines)
+		'line_length_distribution': line_length_distribution(lines),
+		'line_indent_distribution': line_indent_distribution(lines)
 	}
 
 if __name__ == "__main__":
