@@ -7,24 +7,18 @@ Command Line:
 
 import sys
 
+def distribution(values):
+	result = {}
+	for value in values:
+		result[value] = result.get(value, 0) + 1
+	return result
+
 def ends_with_whitespace(line):
 	if len(line) < 1: return False
 	return line[len(line)-1].isspace()
 
-def line_count(code):
-	return code.count('\n')
-
 def lines_ending_in_whitespace_count(lines):
 	return sum(map(ends_with_whitespace, lines))
-
-def distribution(values):
-	result = {}
-	for value in values:
-		if value in result:
-			result[value] += 1
-		else:
-			result[value] = 1
-	return result
 
 def line_length_distribution(lines):
 	return distribution(map(len, lines))
@@ -44,7 +38,7 @@ def line_indent_distribution(lines):
 def report(code):
 	lines = code.splitlines()
 	return {
-		'line_count': line_count(code),
+		'line_count': len(lines),
 		'lines_ending_in_whitespace_count': lines_ending_in_whitespace_count(lines),
 		'line_length_distribution': line_length_distribution(lines),
 		'line_indent_distribution': line_indent_distribution(lines)
