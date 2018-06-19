@@ -17,10 +17,12 @@ def line_count(code):
 def lines_ending_in_whitespace_count(lines):
 	return sum(map(ends_with_whitespace, lines))
 
-def length_per_line(lines):
+def line_lengths(lines):
+	return map(len, lines)
+
+def line_length_distribution(lines):
 	result = {}
-	for line in lines:
-		line_len = len(line)
+	for line_len in line_lengths(lines):
 		if line_len in result:
 			result[line_len] += 1
 		else:
@@ -32,7 +34,7 @@ def report(code):
 	return {
 		'line_count': line_count(code),
 		'lines_ending_in_whitespace_count': lines_ending_in_whitespace_count(lines),
-		'length_per_line': length_per_line(lines)
+		'line_length_distribution': line_length_distribution(lines)
 	}
 
 if __name__ == "__main__":
