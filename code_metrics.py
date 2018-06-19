@@ -1,11 +1,10 @@
 """
 Generates metrics for given source code input.
-
-Command Line:
-> python code_metrics.py [file path]
 """
 
-import sys, re
+import sys, re, argparse
+
+target_lang = 'python'
 
 python_func_regex = re.compile('def\s+(.*)\(.*:')
 
@@ -80,12 +79,15 @@ def report(code):
 	}
 
 if __name__ == "__main__":
-	if len(sys.argv) < 2:
-		print(__doc__)
-		#TODO: test() - import code_metrics_test.py
-		exit()
+	parser = argparse.ArgumentParser()
+	parser.add_argument('input_file_path', metavar='file')
+	parser.add_argument('--lang', nargs='?', help='force programming language (python)')
+	args = parser.parse_args()
 
-	path = sys.argv[1]
+	if args.lang:
+		target_lang = args.lang
+
+	path = args.input_file_path
 	with open(path, "r") as input_file:
 		code = input_file.read()
 		print(report(code))
