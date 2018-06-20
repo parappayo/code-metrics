@@ -1,5 +1,7 @@
 """
 Methods to output code metrics in html or other formats.
+
+TODO: rename me to metrics_formatter and update all docs
 """
 
 import stats
@@ -57,6 +59,32 @@ var {id} = new Chart(ctx, {{
 </script>
 """
 
+html_project_index_format = """
+<!doctype html>
+<html>
+
+<head>
+<title>Metrics: {report[source_path]}</title>
+<script src="Chart.min.js"></script>
+</head>
+
+<body>
+
+<h1>Metrics: {report[source_path]}</h1>
+
+<table>
+<tr><td>File Count</td><td>{report[file_count]}</td></tr>
+<tr><td>Function Count</td><td>{report[function_count]}</td></tr>
+<tr><td>Line Count</td><td>{report[line_count]}</td></tr>
+<tr><td>Trailing Whitespace Lines</td><td>{report[lines_ending_in_whitespace_count]}</td></tr>
+</table>
+
+{charts}
+
+</body>
+</html>
+"""
+
 def function_length_distribution(functions_report):
 	result = {}
 	for function_name, report in functions_report.items():
@@ -80,13 +108,14 @@ def charts_html(report):
 		id='line_indent_distribution',
 		keys=keys,
 		values=values))
-	keys, values = stats.sort_distribution(function_length_distribution(report['functions']))
-	charts.append(html_chart_format.format(
-		title='Function Lengths',
-		label='function count',
-		id='function_length_distribution',
-		keys=keys,
-		values=values))
+	if 'functions' in report:
+		keys, values = stats.sort_distribution(function_length_distribution(report['functions']))
+		charts.append(html_chart_format.format(
+			title='Function Lengths',
+			label='function count',
+			id='function_length_distribution',
+			keys=keys,
+			values=values))
 	return ''.join(charts)
 
 def write_report(report, format, out_stream):
@@ -97,3 +126,12 @@ def write_report(report, format, out_stream):
 			report=report,
 			function_count=len(report['functions']),
 			charts=charts_html(report)))
+
+def write_project_index(project_report, format, out_stream):
+	if format == 'pydict':
+		out_stream.write(project_report)
+	else:
+		# TODO: add a list of files with links to the index
+		out_stream.write(html_project_index_format.format(
+			report=project_report,
+			charts=charts_html(project_report)))

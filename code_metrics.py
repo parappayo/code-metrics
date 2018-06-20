@@ -48,6 +48,7 @@ def report(path, code, target_lang):
 		print('input lang not supported yet:', target_lang)
 		return {}
 	lines = code.splitlines()
+	# TODO: need to gather stats about classes also
 	return {
 		'source_path': path,
 		'line_count': len(lines),

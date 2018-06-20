@@ -14,3 +14,7 @@ def sort_distribution(distr_dict):
 		keys.append(key)
 		values.append(distr_dict[key])
 	return keys, values
+
+def merge_into_distribution(dest, src):
+	for key, value in src.items():
+		dest[key] = dest.get(key, 0) + value

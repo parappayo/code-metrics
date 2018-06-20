@@ -7,7 +7,7 @@ TODO: project config should be supplied as input, not imported
 """
 
 import os, shutil
-import code_metrics, format_metrics, config
+import code_metrics, format_metrics, stats, config
 
 def is_code_file(path):
 	filename, file_ext = os.path.splitext(path)
@@ -23,16 +23,38 @@ def find_files(root_path, filter):
 			result.append(path)
 	return result
 
+def add_project_totals(project_report, file_reports):
+	project_report['file_count'] = len(file_reports)
+	project_report['function_count'] = 0
+	project_report['line_count'] = 0
+	project_report['lines_ending_in_whitespace_count'] = 0
+	project_report['line_length_distribution'] = {}
+	project_report['line_indent_distribution'] = {}
+
+	for filename, file_report in file_reports.items():
+		if file_report == {}:
+			continue
+		project_report['function_count'] += len(file_report['functions'])
+		project_report['line_count'] += file_report['line_count']
+		project_report['lines_ending_in_whitespace_count'] += file_report['lines_ending_in_whitespace_count']
+		stats.merge_into_distribution(project_report['line_length_distribution'], file_report['line_length_distribution'])
+		stats.merge_into_distribution(project_report['line_indent_distribution'], file_report['line_indent_distribution'])
+
 def report(project_root):
-	result = {}
+	file_reports = {}
 	for path in find_files(project_root, is_code_file):
 		target_lang = code_metrics.file_ext_lang(path)
 		with open(path, 'r') as input_file:
 			try:
-				result[path] = code_metrics.report(path, input_file.read(), target_lang)
+				file_reports[path] = code_metrics.report(path, input_file.read(), target_lang)
 			except IOError:
 				continue
-	return result
+	project_report = {
+		'source_path': project_root,
+		'files': file_reports
+	}
+	add_project_totals(project_report, file_reports)
+	return project_report
 
 def write_report_file(report, filepath, target_dir):
 	if report == {}:
@@ -57,10 +79,15 @@ def write_report(project_report, target_dir):
 		exit()
 	os.mkdir(target_dir)
 
-	for filepath, report in project_report.items():
+	with open(target_dir + '/' + 'index.html', 'w') as output_file:
+		format_metrics.write_project_index(project_report, 'html', output_file)
+
+	for filepath, report in project_report['files'].items():
 		write_report_file(report, filepath, target_dir)
 
 if __name__ == '__main__':
 	# TODO: make output dir configurable
+	# TODO: make output format configurable
+	# TODO: if output folder exists, attempt a different one
 	write_report(report(config.project_root), 'project_report')
 	shutil.copy('Chart.min.js', './project_report/')
