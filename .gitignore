@@ -3,7 +3,7 @@ __pycache__
 
 # test output
 *.html
-project_report/
+project_report*/
 
 # for Sublime Test users
 *.sublime-project

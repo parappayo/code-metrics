@@ -9,6 +9,19 @@ TODO: project config should be supplied as input, not imported
 import os, shutil
 import code_metrics, format_metrics, stats, config
 
+def find_available_filename(filename):
+	if not os.path.exists(filename):
+		return filename
+	attempts = 1
+	filename += str(attempts)
+	while os.path.exists(filename):
+		attempts += 1
+		if (attempts > 999):
+			print('error: could not find available filename', filename)
+			exit()
+		filename = filename[:len(filename)-1] + str(attempts)
+	return filename
+
 def is_code_file(path):
 	filename, file_ext = os.path.splitext(path)
 	return file_ext in config.code_filename_extensions
@@ -64,11 +77,7 @@ def write_report_file(report, filepath, target_dir):
 	filename = filename.replace('.', '_')
 	filename += '.html'
 	out_file_path = target_dir + '/' + filename
-
-	attempts = 1
-	while os.path.exists(out_file_path):
-		out_file_path += str(attempts)
-		attempts += 1
+	out_file_path = find_available_filename(out_file_path)
 
 	with open(out_file_path, 'w') as output_file:
 		format_metrics.write_report(report, 'html', output_file)
@@ -86,8 +95,8 @@ def write_report(project_report, target_dir):
 		write_report_file(report, filepath, target_dir)
 
 if __name__ == '__main__':
-	# TODO: make output dir configurable
 	# TODO: make output format configurable
-	# TODO: if output folder exists, attempt a different one
-	write_report(report(config.project_root), 'project_report')
-	shutil.copy('Chart.min.js', './project_report/')
+	output_dir = config.project_report_output_dir # TODO: also accept command line flag
+	output_dir = find_available_filename(output_dir)
+	write_report(report(config.project_root), output_dir)
+	shutil.copy('Chart.min.js', output_dir)
