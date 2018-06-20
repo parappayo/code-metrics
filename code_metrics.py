@@ -27,11 +27,11 @@ html_report_format = """
 
 <h1>Metrics: {report[source_path]}</h1>
 
-<h3>Line Count</h3>
-<p>{report[line_count]}</p>
-
-<h3>Number of Lines Ending in Whitespace</h3>
-<p>{report[lines_ending_in_whitespace_count]}</p>
+<table>
+<tr><td>Line Count</td><td>{report[line_count]}</td></tr>
+<tr><td>Trailing Whitespace Lines</td><td>{report[lines_ending_in_whitespace_count]}</td></tr>
+<tr><td>Function Count</td><td>{function_count}</td></tr>
+</table>
 
 {charts}
 
@@ -126,9 +126,7 @@ def split_functions_python(lines):
 
 def report_function(lines):
 	return {
-		'line_count': len(lines),
-		'line_length_distribution': line_length_distribution(lines),
-		'line_indent_distribution': line_indent_distribution(lines)
+		'line_count': len(lines)
 	}
 
 def report_functions(lines):
@@ -136,6 +134,13 @@ def report_functions(lines):
 	functions = split_functions_python(lines) #TODO: if lang == Python
 	for name, lines in functions.items():
 		result[name] = report_function(lines)
+	return result
+
+def function_length_distribution(functions_report):
+	result = {}
+	for function_name, report in functions_report.items():
+		line_count = report['line_count']
+		result[line_count] = result.get(line_count, 0) + 1
 	return result
 
 def report(path, code, target_lang):
@@ -153,19 +158,38 @@ def report(path, code, target_lang):
 	}
 
 def charts_html(report):
+	charts = []
 	keys, values = sort_distribution(report['line_length_distribution'])
-	return html_chart_format.format(
-		title='Line Length Distribution',
+	charts.append(html_chart_format.format(
+		title='Line Lengths',
 		label='line count',
 		id='line_length_distribution',
 		keys=keys,
-		values=values)
+		values=values))
+	keys, values = sort_distribution(report['line_indent_distribution'])
+	charts.append(html_chart_format.format(
+		title='Line Indents',
+		label='line count',
+		id='line_indent_distribution',
+		keys=keys,
+		values=values))
+	keys, values = sort_distribution(function_length_distribution(report['functions']))
+	charts.append(html_chart_format.format(
+		title='Function Lengths',
+		label='function count',
+		id='function_length_distribution',
+		keys=keys,
+		values=values))
+	return ''.join(charts)
 
 def print_report(report, format):
 	if format == 'pydict':
 		print(report)
 	else:
-		print(html_report_format.format(report=report, charts=charts_html(report)))
+		print(html_report_format.format(
+			report=report,
+			function_count=len(report['functions']),
+			charts=charts_html(report)))
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser(description=__doc__)
