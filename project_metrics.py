@@ -6,9 +6,8 @@ generates reports based on all of the source code found.
 TODO: project config should be supplied as input, not imported
 """
 
-import os, config
-from shutil import copyfile
-import code_metrics, format_metrics
+import os, shutil
+import code_metrics, format_metrics, config
 
 def is_code_file(path):
 	filename, file_ext = os.path.splitext(path)
@@ -64,4 +63,4 @@ def write_report(project_report, target_dir):
 if __name__ == '__main__':
 	# TODO: make output dir configurable
 	write_report(report(config.project_root), 'project_report')
-	copyfile('Chart.min.js', './project_report/')
+	shutil.copy('Chart.min.js', './project_report/')
