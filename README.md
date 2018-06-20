@@ -1,26 +1,42 @@
 # code-metrics
 
-Python scripts for scraping code projects and gathering statistics. The goal is to create helpful reports on which files in a project are good candidates for code auditing and clean-up.
+This project contains Python scripts for scraping code projects and gathering statistics. The goal is to generate helpful reports to inform code auditing and refactoring efforts.
 
-For example, code files with lots of dependencies are likely important and should be well maintained. Large code files may benefit from being decomposed into smaller units. Code files with minor typographical errors such as trailing whitespace may have been hastily authored and not carefully checked.
+For example, knowing which code files contain many or few dependencies can give an idea as to what interfaces are higher level or lower level in the project, thus informing reorganization efforts. Large code files may benefit from being decomposed into smaller units. Code files with minor typographical errors such as trailing whitespace may have been hastily authored and may need to be audited.
 
-Target language support is intended to be broad and focus on commonly applicable stats.
+The intent of these tools is to provide broad support for many programming languages by focusing on commonly applicable stats. For instance, most languages do not use trailing whitespace as a useful syntax, so we assume it to be unwanted. Most programmers will helpfully indent their code to indicate scope, so indent level is tracked in the hope of providing some measure of complexity. This project will endeavour to make these features configurable.
 
 # Usage
 
-There are two major entry points into the code-metrics project.
+There are multiple entry points into the code-metrics project. The starting points that are most useful for users are summarized below.
 
 ## code_metrics.py
 
-This program generates code metrics for a single target file. It expects to be configured via command-line arguments. It can also be imported and used as a library.
+This program gathers code metrics for a single target file and generates a report. It expects to be configured via command-line arguments. It can also be imported and used as a library.
+
+TODO: provide examples here
 
 ## project_metrics.py
 
-This program generates code metrics for a project comprised of code files. It expects to be configured via a settings file. The code files in the target project may consist of different programming languages.
+TODO: make this program work
+
+This program gathers code metrics for a project comprised of code files and generates a report. It expects to be configured via a settings file. The code files in the target project may consist of different programming languages.
+
+TODO: provide examples here
+
+## repo_metrics.py
+
+TODO: create this program
+
+This program gathers code metrics for revision control repository (such as git or Subversion) and generates a report. It expects to be configured via a settings file. The created report shows the progression of the project over time.
+
+TODO: provide examples here
 
 # Caveats
 
-* Robust parsing of code is not a priority for this project
+* Python 3 required
+* This project is not mature. There is a long road ahead toward making it properly useful.
+* Robust parsing of code is not a priority for this project. Expect pathelogical code to generate unpredictable results.
 
 # Features Wishlist
 
@@ -32,6 +48,7 @@ This program generates code metrics for a project comprised of code files. It ex
 
 ## Lang Support
 
+* Default to "generic" if the target lang not explicitly supported
 * Lisp
 * JavaScript
 * C#
@@ -41,8 +58,7 @@ This program generates code metrics for a project comprised of code files. It ex
 
 ## Output
 
-* HTML output for projects
-* can navigate around project output, drill into files
+* can navigate around project html output, drill into reports on each file
 * source code for functions also included in file output, can drill to see code
 * nice syntax highlighting for source code in output
 

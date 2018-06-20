@@ -1,5 +1,7 @@
 """
-Generates metrics for an given project.
+Generates code metrics for a given project. Whereas code_metrics.py operates
+on a single stream of source code input, this program walks a project tree and
+generates reports based on all of the source code found.
 
 TODO: project config should be supplied as input, not imported
 """

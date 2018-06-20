@@ -1,5 +1,8 @@
 """
-Methods for parsing data out of source code files.
+Simple hacks to gather data about source code.
+
+The parsing techniques employed here are not robust, so assume that
+pathelogical code will confound these methods.
 """
 
 import re
@@ -36,4 +39,3 @@ def split_functions_python(lines):
 				function_name = match[1]
 				function_body = []
 	return result
-
