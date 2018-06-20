@@ -1,4 +1,4 @@
 
-project_root = ""
+project_root = "."
 
-source_file_name_endings = ("cs")
+code_filename_extensions = [ ".c", ".cs", ".cpp", ".js", ".py" ]

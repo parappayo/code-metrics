@@ -20,7 +20,7 @@ lang_file_ext = {
 
 def file_ext_lang(path):
 	filename, file_ext = os.path.splitext(path)
-	return lang_file_ext.get(file_ext, 'python')
+	return lang_file_ext.get(file_ext, 'generic')
 
 def lines_ending_in_whitespace_count(lines):
 	return sum(map(code_parse.ends_with_whitespace, lines))
@@ -46,7 +46,7 @@ def report_functions(lines):
 def report(path, code, target_lang):
 	if target_lang != 'python':
 		print('input lang not supported yet:', target_lang)
-		exit()
+		return {}
 	lines = code.splitlines()
 	return {
 		'source_path': path,
@@ -62,7 +62,7 @@ if __name__ == "__main__":
 	parser.add_argument('input_file_path', metavar='file')
 	parser.add_argument('--lang', nargs='?',
 		help='override input language',
-		choices=['c', 'cplusplus', 'javascript', 'python'])
+		choices=['c', 'cplusplus', 'generic', 'javascript', 'python'])
 	parser.add_argument('--format', nargs='?',
 		help='override output format',
 		choices=['html', 'pydict'])
@@ -72,11 +72,7 @@ if __name__ == "__main__":
 
 	target_lang = args.lang
 	if not target_lang:
-		ext_lang = file_ext_lang(path)
-		if ext_lang:
-			target_lang = ext_lang
-		else:
-			target_lang = 'python'
+		target_lang = file_ext_lang(path)
 
 	output_format = args.format
 	if not output_format:
@@ -84,4 +80,4 @@ if __name__ == "__main__":
 
 	with open(path, "r") as input_file:
 		code = input_file.read()
-		format_metrics.print_report(report(path, code, target_lang), args.format)
+		format_metrics.write_report(report(path, code, target_lang), args.format, sys.stdout)

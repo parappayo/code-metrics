@@ -89,11 +89,11 @@ def charts_html(report):
 		values=values))
 	return ''.join(charts)
 
-def print_report(report, format):
+def write_report(report, format, out_stream):
 	if format == 'pydict':
-		print(report)
+		out_stream.write(report)
 	else:
-		print(html_report_format.format(
+		out_stream.write(html_report_format.format(
 			report=report,
 			function_count=len(report['functions']),
 			charts=charts_html(report)))
