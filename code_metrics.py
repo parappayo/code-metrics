@@ -4,11 +4,11 @@ Generates a metrics report for given source code input.
 Loosely speaking, the following dependencies are employed:
 - code_parse.py is used to gather raw metrics about the input
 - stats.py is used to gather statistics from the raw metrics
-- format_metrics.py is used to generate output from the metrics
+- metrics_formatter.py is used to generate output from the metrics
 """
 
 import os, argparse
-import stats, code_parse, format_metrics
+import stats, code_parse, metrics_formatter
 
 lang_file_ext = {
 	'.py': 'python',
@@ -81,4 +81,4 @@ if __name__ == "__main__":
 
 	with open(path, "r") as input_file:
 		code = input_file.read()
-		format_metrics.write_report(report(path, code, target_lang), args.format, sys.stdout)
+		metrics_formatter.write_report(report(path, code, target_lang), args.format, sys.stdout)

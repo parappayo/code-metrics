@@ -7,7 +7,7 @@ TODO: project config should be supplied as input, not imported
 """
 
 import os, shutil
-import code_metrics, format_metrics, stats, config
+import code_metrics, metrics_formatter, stats, config
 
 def find_available_filename(filename):
 	if not os.path.exists(filename):
@@ -80,7 +80,7 @@ def write_report_file(report, filepath, target_dir):
 	out_file_path = find_available_filename(out_file_path)
 
 	with open(out_file_path, 'w') as output_file:
-		format_metrics.write_report(report, 'html', output_file)
+		metrics_formatter.write_report(report, 'html', output_file)
 
 def write_report(project_report, target_dir):
 	if os.path.exists(target_dir):
@@ -89,7 +89,7 @@ def write_report(project_report, target_dir):
 	os.mkdir(target_dir)
 
 	with open(target_dir + '/' + 'index.html', 'w') as output_file:
-		format_metrics.write_project_index(project_report, 'html', output_file)
+		metrics_formatter.write_project_index(project_report, 'html', output_file)
 
 	for filepath, report in project_report['files'].items():
 		write_report_file(report, filepath, target_dir)

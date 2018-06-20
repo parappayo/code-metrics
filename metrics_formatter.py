@@ -1,7 +1,5 @@
 """
 Methods to output code metrics in html or other formats.
-
-TODO: rename me to metrics_formatter and update all docs
 """
 
 import stats
