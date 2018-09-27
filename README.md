@@ -45,6 +45,7 @@ TODO: provide examples here
 * Separate modules for stats methods, code parser, report html formatter, and command-line wrapper
 * Test suite using doctest
 * Generate some sample output by running this against other GitHub repos
+* Modularize language support so that language specific parser rules live in their own plug-ins
 
 ## Lang Support
 
@@ -64,12 +65,15 @@ TODO: provide examples here
 
 ## Stats
 
+* Source Lines of Code (SLOC)
+* Assignments, Branches, Conditions (ABC)
 * Custom regex rules to generate line counts / distributions for
 * Max nested scope depth (configurable for curlys, parens, brackets, keywords)
 * Nested scope depth stats (number of instances of each depth)
 * Member function, member variable stats (requires reflection?)
 * Include / Using count stats, most number of dependencies
 * Include depth stats (tree of includes), largest total compilation units
+* Cyclomatic complexity - estimate the number of unique execution paths
 
 ## Revision Control Integration
 
