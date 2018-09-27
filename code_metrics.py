@@ -8,7 +8,7 @@ Loosely speaking, the following dependencies are employed:
 """
 
 import os, argparse
-import stats, code_parse, metrics_formatter
+import stats, line_metrics, code_parse, metrics_formatter
 
 lang_file_ext = {
 	'.py': 'python',
@@ -23,13 +23,13 @@ def file_ext_lang(path):
 	return lang_file_ext.get(file_ext, 'generic')
 
 def lines_ending_in_whitespace_count(lines):
-	return sum(map(code_parse.ends_with_whitespace, lines))
+	return sum(map(line_metrics.ends_with_whitespace, lines))
 
 def line_length_distribution(lines):
 	return stats.distribution(map(len, lines))
 
 def line_indent_distribution(lines):
-	return stats.distribution(map(code_parse.line_indent_len, lines))
+	return stats.distribution(map(line_metrics.indent_level, lines))
 
 def report_function(lines):
 	return {

@@ -9,19 +9,6 @@ import re
 
 python_func_regex = re.compile('def\s+(.*)\(.*:')
 
-def ends_with_whitespace(line):
-	if len(line) < 1: return False
-	return line[len(line)-1].isspace()
-
-def line_indent_len(line):
-	result = 0
-	for c in line:
-		if c.isspace():
-			result += 1
-		else:
-			break
-	return result
-
 def split_functions_python(lines):
 	result = {}
 	function_name = False
