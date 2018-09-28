@@ -42,7 +42,6 @@ TODO: provide examples here
 
 ## General
 
-* Separate modules for stats methods, code parser, report html formatter, and command-line wrapper
 * Test suite using doctest
 * Generate some sample output by running this against other GitHub repos
 * Modularize language support so that language specific parser rules live in their own plug-ins
@@ -60,14 +59,16 @@ TODO: provide examples here
 ## Output
 
 * can navigate around project html output, drill into reports on each file
+* Per-file stats should automatically include each per-line stat mean, 20th, 50th, 80th percentile values
+* Per-project stats should automatically include each per-file stat mean, 20th, 50th, 80th percentile values
 * source code for functions also included in file output, can drill to see code
-* nice syntax highlighting for source code in output
+* syntax highlighting for source code in output
 
 ## Stats
 
 * Source Lines of Code (SLOC)
 * Assignments, Branches, Conditions (ABC)
-* Custom regex rules to generate line counts / distributions for
+* Per-line bool stat could be defined in settings as a regex
 * Max nested scope depth (configurable for curlys, parens, brackets, keywords)
 * Nested scope depth stats (number of instances of each depth)
 * Member function, member variable stats (requires reflection?)
