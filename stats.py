@@ -18,3 +18,26 @@ def sort_distribution(distr_dict):
 def merge_into_distribution(dest, src):
 	for key, value in src.items():
 		dest[key] = dest.get(key, 0) + value
+
+class Metric:
+	def __init__(self, id, name, type, method):
+		self.id = id
+		self.name = name
+		self.type = type
+		self.method = method
+
+	def __str__(self):
+		print('id={metric.id},name={metric.name},type={metric.type}',
+			metric=self)
+
+	def count(self, data):
+		return sum(map(self.method, data))
+
+	def distribution(self, data):
+		return distribution(map(self.method, data))
+
+	def value(self, data):
+		if self.type == 'bool':
+			return self.count(data)
+		if self.type == 'int':
+			return self.distribution(data)
