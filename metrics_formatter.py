@@ -17,9 +17,9 @@ html_report_format = """
 
 <h1>Metrics: {report[source_path]}</h1>
 
+{line_counts}
+
 <table>
-<tr><td>Line Count</td><td>{report[line_count]}</td></tr>
-<tr><td>Trailing Whitespace Lines</td><td>{report[lines_ending_in_whitespace_count]}</td></tr>
 <tr><td>Function Count</td><td>{function_count}</td></tr>
 </table>
 
@@ -74,7 +74,6 @@ html_project_index_format = """
 <tr><td>File Count</td><td>{report[file_count]}</td></tr>
 <tr><td>Function Count</td><td>{report[function_count]}</td></tr>
 <tr><td>Line Count</td><td>{report[line_count]}</td></tr>
-<tr><td>Trailing Whitespace Lines</td><td>{report[lines_ending_in_whitespace_count]}</td></tr>
 </table>
 
 {charts}
@@ -90,30 +89,45 @@ def function_length_distribution(functions_report):
 		result[line_count] = result.get(line_count, 0) + 1
 	return result
 
+def line_counts_html(report):
+	result = []
+	result.append('<table>')
+
+	for metric in report['metrics']:
+		if metric.type != 'bool':
+			continue
+		result.append('<tr><td>{name}</td><td>{count}</td></tr>'.format(
+			name=metric.name,
+			count=report[metric.id]))
+
+	result.append('</table>')
+	return ''.join(result)
+
 def charts_html(report):
 	charts = []
-	keys, values = stats.sort_distribution(report['line_length_distribution'])
-	charts.append(html_chart_format.format(
-		title='Line Lengths',
-		label='line count',
-		id='line_length_distribution',
-		keys=keys,
-		values=values))
-	keys, values = stats.sort_distribution(report['line_indent_distribution'])
-	charts.append(html_chart_format.format(
-		title='Line Indents',
-		label='line count',
-		id='line_indent_distribution',
-		keys=keys,
-		values=values))
+
+	if 'metrics' in report:
+		for metric in report['metrics']:
+			if metric.type != 'int':
+				continue
+			metric_value = report[metric.id]
+			keys, values = stats.sort_distribution(metric_value)
+			charts.append(html_chart_format.format(
+				title=metric.name,
+				id=metric.id,
+				label='count',
+				keys=keys,
+				values=values))
+
 	if 'functions' in report:
 		keys, values = stats.sort_distribution(function_length_distribution(report['functions']))
 		charts.append(html_chart_format.format(
 			title='Function Lengths',
-			label='function count',
 			id='function_length_distribution',
+			label='function count',
 			keys=keys,
 			values=values))
+
 	return ''.join(charts)
 
 def write_report(report, format, out_stream):
@@ -122,6 +136,7 @@ def write_report(report, format, out_stream):
 	else:
 		out_stream.write(html_report_format.format(
 			report=report,
+			line_counts=line_counts_html(report),
 			function_count=len(report['functions']),
 			charts=charts_html(report)))
 

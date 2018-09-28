@@ -49,9 +49,11 @@ def add_project_totals(project_report, file_reports):
 			continue
 		project_report['function_count'] += len(file_report['functions'])
 		project_report['line_count'] += file_report['line_count']
-		project_report['lines_ending_in_whitespace_count'] += file_report['lines_ending_in_whitespace_count']
-		stats.merge_into_distribution(project_report['line_length_distribution'], file_report['line_length_distribution'])
-		stats.merge_into_distribution(project_report['line_indent_distribution'], file_report['line_indent_distribution'])
+
+		# TODO: figure out how to aggregate project stats like this
+		#project_report['lines_ending_in_whitespace_count'] += file_report['lines_ending_in_whitespace_count']
+		#stats.merge_into_distribution(project_report['line_length_distribution'], file_report['line_length_distribution'])
+		#stats.merge_into_distribution(project_report['line_indent_distribution'], file_report['line_indent_distribution'])
 
 def report(project_root):
 	file_reports = {}

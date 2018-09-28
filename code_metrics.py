@@ -8,7 +8,7 @@ Loosely speaking, the following dependencies are employed:
 """
 
 import os, argparse
-import stats, line_metrics, code_parse, metrics_formatter
+import line_metrics, code_parse, metrics_formatter
 
 lang_file_ext = {
 	'.py': 'python',
@@ -21,15 +21,6 @@ lang_file_ext = {
 def file_ext_lang(path):
 	filename, file_ext = os.path.splitext(path)
 	return lang_file_ext.get(file_ext, 'generic')
-
-def lines_ending_in_whitespace_count(lines):
-	return sum(map(line_metrics.ends_with_whitespace, lines))
-
-def line_length_distribution(lines):
-	return stats.distribution(map(len, lines))
-
-def line_indent_distribution(lines):
-	return stats.distribution(map(line_metrics.indent_level, lines))
 
 def report_function(lines):
 	return {
@@ -48,15 +39,18 @@ def report(path, code, target_lang):
 		print('input lang not supported yet:', target_lang)
 		return {}
 	lines = code.splitlines()
-	# TODO: need to gather stats about classes also
-	return {
-		'source_path': path,
-		'line_count': len(lines),
-		'lines_ending_in_whitespace_count': lines_ending_in_whitespace_count(lines),
-		'line_length_distribution': line_length_distribution(lines),
-		'line_indent_distribution': line_indent_distribution(lines),
-		'functions': report_functions(lines)
+
+	result = {
+		'metrics': line_metrics.default
 	}
+
+	for metric in line_metrics.default:
+		result[metric.id] = metric.value(lines)
+
+	result['source_path'] = path
+	result['line_count'] = len(lines)
+	result['functions'] = report_functions(lines)
+	return result
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser(description=__doc__)
