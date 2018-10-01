@@ -19,23 +19,23 @@ def ends_with_whitespace(line):
 
 default = [
 	Metric(
-		'line_length',
-		'Line Length',
-		'int',
-		len ),
+		id='line_length',
+		name='Line Length',
+		type='int',
+		method=len ),
 	Metric(
-		'line_indent_level',
-		'Line Indent Level',
-		'int',
-		indent_level ),
+		id='line_indent_level',
+		name='Line Indent Level',
+		type='int',
+		method=indent_level ),
 	Metric(
-		'line_exists',
-		'Line Count',
-		'bool',
-		lambda x: True ),
+		id='line_exists',
+		name='Line Count',
+		type='bool',
+		method=lambda x: True ),
 	Metric(
-		'line_ends_with_whitespace',
-		'Lines Ending in Whitespace',
-		'bool',
-		ends_with_whitespace ),
+		id='line_ends_with_whitespace',
+		name='Lines Ending in Whitespace',
+		type='bool',
+		method=ends_with_whitespace ),
 ]
