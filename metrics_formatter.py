@@ -2,7 +2,7 @@
 Methods to output code metrics in html or other formats.
 """
 
-import stats
+import stats, os
 
 html_report_format = """
 <!doctype html>
@@ -78,6 +78,8 @@ html_project_index_format = """
 
 {charts}
 
+{files}
+
 </body>
 </html>
 """
@@ -130,6 +132,21 @@ def charts_html(report):
 
 	return ''.join(charts)
 
+def files_html(report):
+	files = []
+	files.append('<ul>')
+
+	for path, file_report in report['files'].items():
+		filename = convert_path_to_report_filename(path)
+		files.append('<li><a href="')
+		files.append(filename)
+		files.append('">')
+		files.append(path)
+		files.append('</a></li>')
+
+	files.append('</ul>')
+	return ''.join(files)
+
 def write_report(report, format, out_stream):
 	if format == 'pydict':
 		out_stream.write(report)
@@ -147,4 +164,11 @@ def write_project_index(project_report, format, out_stream):
 		# TODO: add a list of files with links to the index
 		out_stream.write(html_project_index_format.format(
 			report=project_report,
-			charts=charts_html(project_report)))
+			charts=charts_html(project_report),
+			files=files_html(project_report)))
+
+def convert_path_to_report_filename(path):
+	filename = os.path.basename(path)
+	filename = filename.replace('.', '_')
+	filename += '.html'
+	return filename

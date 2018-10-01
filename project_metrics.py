@@ -71,13 +71,11 @@ def report(project_root):
 	add_project_totals(project_report, file_reports)
 	return project_report
 
-def write_report_file(report, filepath, target_dir):
+def write_report_file(report, path, target_dir):
 	if report == {}:
 		return
 
-	filename = os.path.basename(filepath)
-	filename = filename.replace('.', '_')
-	filename += '.html'
+	filename = metrics_formatter.convert_path_to_report_filename(path)
 	out_file_path = target_dir + '/' + filename
 	out_file_path = find_available_filename(out_file_path)
 
@@ -93,8 +91,8 @@ def write_report(project_report, target_dir):
 	with open(target_dir + '/' + 'index.html', 'w') as output_file:
 		metrics_formatter.write_project_index(project_report, 'html', output_file)
 
-	for filepath, report in project_report['files'].items():
-		write_report_file(report, filepath, target_dir)
+	for path, report in project_report['files'].items():
+		write_report_file(report, path, target_dir)
 
 if __name__ == '__main__':
 	# TODO: make output format configurable
